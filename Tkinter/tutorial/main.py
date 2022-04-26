@@ -9,7 +9,6 @@ BACKGROUND_COLOR = "#223441"
 # ---------------------------- READ FILE ----------------------------- #
 
 data = pandas.read_csv("todo_list.csv", index_col=0)
-print(data)
 todolist = data["list"].to_list()
 
 
@@ -32,8 +31,27 @@ def delete_task():
             list_item = str(listbox.get(i))
             listbox.delete(ANCHOR)
             todolist.remove(list_item)
+            my_entry.delete(0, END)
     except UnboundLocalError:
         messagebox.showwarning("warning", "Please select some task.")
+
+
+def edit_task():
+    new_data = my_entry.get()
+    todolist[index] = new_data
+    listbox.delete(index)
+    listbox.insert(index, new_data)
+    my_entry.delete(0, END)
+
+
+def select_for_listbox(event):
+    global index, list_item
+    listbox = event.widget
+    for i in listbox.curselection():
+        index = i
+        list_item = str(listbox.get(i))
+    my_entry.delete(0, END)
+    my_entry.insert(0, string=list_item)
 
 
 def on_save():
@@ -77,6 +95,8 @@ scrollbar.pack(side=RIGHT, fill=BOTH)
 listbox.config(yscrollcommand=scrollbar.set)
 scrollbar.config(command=listbox.yview)
 
+listbox.bind('<<ListboxSelect>>', select_for_listbox)
+
 my_entry = Entry(window, font=("Arial", 24), background="white", foreground="black")
 
 my_entry.pack(pady=20)
@@ -84,11 +104,14 @@ my_entry.pack(pady=20)
 button_frame = Frame(window)
 button_frame.pack(pady=20)
 
-add_button = Button(button_frame, text="ADD", font=("Arial", 20), padx=20, pady=10, command=new_task)
-add_button.pack(fill=BOTH, expand=True, side=LEFT)
+add_button = Button(button_frame, text="ADD", font=("Arial", 20), padx=10, pady=10, command=new_task)
+add_button.grid(row=0, column=0)
 
-delete_button = Button(button_frame, text="DELETE", font=("Arial", 20), padx=20, pady=10, command=delete_task)
-delete_button.pack(fill=BOTH, expand=True, side=RIGHT)
+edit_button = Button(button_frame, text="EDIT", font=("Arial", 20), padx=10, pady=10, command=edit_task)
+edit_button.grid(row=0, column=1)
+
+delete_button = Button(button_frame, text="DELETE", font=("Arial", 20), padx=10, pady=10, command=delete_task)
+delete_button.grid(row=0, column=3)
 
 window.config(menu=menubar)
 window.mainloop()
