@@ -27,10 +27,13 @@ def new_task():
 
 
 def delete_task():
-    for i in listbox.curselection():
-        list_item = str(listbox.get(i))
-    listbox.delete(ANCHOR)
-    todolist.remove(list_item)
+    try:
+        for i in listbox.curselection():
+            list_item = str(listbox.get(i))
+            listbox.delete(ANCHOR)
+            todolist.remove(list_item)
+    except UnboundLocalError:
+        messagebox.showwarning("warning", "Please select some task.")
 
 
 def on_save():
