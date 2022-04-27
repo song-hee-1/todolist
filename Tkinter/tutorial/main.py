@@ -5,6 +5,7 @@ from tkinter import messagebox
 import pandas
 
 BACKGROUND_COLOR = "#223441"
+FONT = ("Arial", 20)
 
 # ---------------------------- READ FILE ----------------------------- #
 
@@ -44,6 +45,19 @@ def edit_task():
     my_entry.delete(0, END)
 
 
+def find_task():
+    find_data = my_entry.get()
+    listbox.delete(0, END)
+    my_entry.delete(0, END)
+    if find_data == "":
+        fill_listbox(todolist)
+    filtered_data = []
+    for item in todolist:
+        if item.find(find_data) >= 0:
+            filtered_data.append(item)
+    fill_listbox(filtered_data)
+
+
 def select_for_listbox(event):
     global index, list_item
     listbox = event.widget
@@ -62,6 +76,11 @@ def on_save():
 def on_exit():
     if messagebox.askokcancel(title="Warning", message="Do you want to quit? \n Unsaved files will be deleted."):
         window.destroy()
+
+
+def fill_listbox(ld):
+    for item in ld:
+        listbox.insert(END, item)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -86,8 +105,7 @@ listbox = Listbox(frame, width=25, height=8, font=("Arial", 18), bd=0, fg="white
                   activestyle="none")
 listbox.pack(side=LEFT, fill=BOTH)
 
-for item in todolist:
-    listbox.insert(END, item)
+fill_listbox(todolist)
 
 scrollbar = Scrollbar(frame, orient=VERTICAL)
 scrollbar.pack(side=RIGHT, fill=BOTH)
@@ -104,14 +122,17 @@ my_entry.pack(pady=20)
 button_frame = Frame(window)
 button_frame.pack(pady=20)
 
-add_button = Button(button_frame, text="ADD", font=("Arial", 20), padx=10, pady=10, command=new_task)
+add_button = Button(button_frame, text="ADD", font=FONT, padx=10, pady=10, command=new_task)
 add_button.grid(row=0, column=0)
 
-edit_button = Button(button_frame, text="EDIT", font=("Arial", 20), padx=10, pady=10, command=edit_task)
-edit_button.grid(row=0, column=1)
+delete_button = Button(button_frame, text="DELETE", font=FONT, padx=10, pady=10, command=delete_task)
+delete_button.grid(row=0, column=1)
 
-delete_button = Button(button_frame, text="DELETE", font=("Arial", 20), padx=10, pady=10, command=delete_task)
-delete_button.grid(row=0, column=3)
+edit_button = Button(button_frame, text="EDIT", font=FONT, padx=10, pady=10, command=edit_task)
+edit_button.grid(row=0, column=2)
+
+find_button = Button(button_frame, text="FIND", font=FONT, padx=10, pady=10, command=find_task)
+find_button.grid(row=0, column=3)
 
 window.config(menu=menubar)
 window.mainloop()
